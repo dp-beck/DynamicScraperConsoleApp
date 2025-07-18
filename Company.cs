@@ -19,6 +19,7 @@ namespace DynamicScraperConsoleApp
         public string? PrincipalOffice { get; set; }
         public string? ManagedBy { get; set; }
         public string? RegisteredAgent { get; set; }
+        public string? Organizer { get; set; }
     }
 }
 

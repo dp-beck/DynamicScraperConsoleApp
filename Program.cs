@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using DynamicScraperConsoleApp;
+using OpenQA.Selenium.Interactions;
 
 // TO DO: FIGURE OUT HOW TO USE SELENIUM TO CLICK THE INITIAL OFFICERS TAB THEN SCRAPE
 
@@ -12,14 +13,20 @@ var chromeOptions = new ChromeOptions();
 chromeOptions.AddArguments("--headless");
 var driver = new ChromeDriver(chromeOptions);
 
+// Set the implicit wait time to allow elements to load
+// This is useful for pages that load elements dynamically
+// Adjust the time as necessary based on the page load speed
+driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
+
 // connecting to the target web page
 driver.Navigate().GoToUrl(url);
 
-// Company Info Nodes
-var nodes = driver.FindElements(By.XPath("//*[@id='MainContent_pInfo']/div/div/div[position() > 0 and position() < 16]"));
-
 Company company = new Company();
-foreach (var node in nodes)
+
+// Company Info Nodes
+var companyInfoNodes = driver.FindElements(By.XPath("//*[@id='MainContent_pInfo']/div/div/div[position() > 0 and position() < 16]"));
+
+foreach (var node in companyInfoNodes)
 {
     // Extracting the property name and value
     var propertyName = node.FindElement(By.XPath("div[1]")).Text.Trim();
@@ -81,6 +88,38 @@ foreach (var node in nodes)
     }
 }
 
+// Get the Initial Officers Button
+IWebElement OpenInitialOfficersTab = driver.FindElement(By.Id("MainContent_BtnInitial"));
+
+// Scroll to the Initial Officers Button
+new Actions(driver)
+                .ScrollToElement(OpenInitialOfficersTab)
+                .Perform();
+
+// Click the Initial Officers Button
+OpenInitialOfficersTab.Click();
+
+// Get Nodes for Initial Officers
+var officerNodes = driver.FindElements(By.XPath("//*[@id='MainContent_pInitial']/div/div[position() > 0 and position() < 4]"));
+
+foreach (var officerNode in officerNodes)
+{
+    // Extracting the officer's name and title
+    var propertyName = officerNode.FindElement(By.XPath("div[1]")).Text.Trim();
+    var propertyValue = officerNode.FindElement(By.XPath("div[2]")).Text.Trim();
+
+    switch (propertyName)
+    {
+        case "Organizer":
+            company.Organizer = propertyValue;
+            break;
+            // Add more cases for other officer properties if needed
+            // For example, if there are titles or roles, you can add them here
+            // case "Title":
+            //     company.Title = propertyValue;
+            //     break;
+    }
+}
 // Print out the company object to the console
 
 System.Console.WriteLine("Organization Number: " + company.OrganizationNumber);
@@ -98,8 +137,9 @@ System.Console.WriteLine("Authority Date: " + company.AuthorityDate);
 System.Console.WriteLine("Last Annual Report: " + company.LastAnnualReport);
 System.Console.WriteLine("Principal Office: " + company.PrincipalOffice);
 System.Console.WriteLine("Registered Agent: " + company.RegisteredAgent);
+System.Console.WriteLine("Country: " + company.Country);
+System.Console.WriteLine("Managed By: " + company.ManagedBy);
+System.Console.WriteLine("Organizer: " + company.Organizer);
 // Add more fields as needed
 
 // Load the Word Document		
-
-// Click Initial Officers Tab
