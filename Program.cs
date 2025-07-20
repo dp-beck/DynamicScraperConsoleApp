@@ -3,23 +3,45 @@ using OpenQA.Selenium.Chrome;
 using DynamicScraperConsoleApp;
 using OpenQA.Selenium.Interactions;
 
-// TO DO: FIGURE OUT HOW TO USE SELENIUM TO CLICK THE INITIAL OFFICERS TAB THEN SCRAPE
-
-// the URL of the target SOS page
-string url = "https://sosbes.sos.ky.gov/BusSearchNProfile/Profile.aspx/?ctr=1374673";
+// TO DO: NOW ENABLE SCRAPING OF CURRENT OFFICERS [Make it all conditional based on the presence of the button]
 
 // to initialize the Chrome Web Driver in headless mode
 var chromeOptions = new ChromeOptions();
 chromeOptions.AddArguments("--headless");
 var driver = new ChromeDriver(chromeOptions);
 
+
 // Set the implicit wait time to allow elements to load
 // This is useful for pages that load elements dynamically
 // Adjust the time as necessary based on the page load speed
 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
 
-// connecting to the target web page
-driver.Navigate().GoToUrl(url);
+string userInput = string.Empty;
+
+do
+{
+    System.Console.WriteLine("Enter the URL of the Kentucky company profile page. Type 'exit' to quit.");
+    userInput = Console.ReadLine()!;
+
+    if (userInput.ToLower() == "exit")
+    {
+        System.Console.WriteLine("Exiting the program.");
+        break;
+    }
+
+    try
+    {
+        // connecting to the target web page
+        driver.Navigate().GoToUrl(userInput);
+    }
+    catch (System.UriFormatException)
+    {
+        System.Console.WriteLine("Invalid URL format. Please try again.");
+        userInput = "";
+    }
+
+} while (userInput == "");
+
 
 Company company = new Company();
 
@@ -88,10 +110,11 @@ foreach (var node in companyInfoNodes)
     }
 }
 
-// Get the Initial Officers Button
-IWebElement OpenInitialOfficersTab = driver.FindElement(By.Id("MainContent_BtnInitial"));
-
-// Scroll to the Initial Officers Button
+// Try-Catch -- Get the Initial Officers Button
+try
+{
+    IWebElement OpenInitialOfficersTab = driver.FindElement(By.Id("MainContent_BtnInitial"));
+    // Scroll to the Initial Officers Button
 new Actions(driver)
                 .ScrollToElement(OpenInitialOfficersTab)
                 .Perform();
@@ -120,26 +143,15 @@ foreach (var officerNode in officerNodes)
             //     break;
     }
 }
-// Print out the company object to the console
 
-System.Console.WriteLine("Organization Number: " + company.OrganizationNumber);
-System.Console.WriteLine("Name: " + company.Name);
-System.Console.WriteLine("Profit or Nonprofit: " + company.ProfitOrNonprofit);
-System.Console.WriteLine("Company Type: " + company.CompanyType);
-System.Console.WriteLine("Industry: " + company.Industry);
-System.Console.WriteLine("Number of Employees: " + company.NumberOfEmployees);
-System.Console.WriteLine("Primary County: " + company.PrimaryCounty);
-System.Console.WriteLine("Status: " + company.Status);
-System.Console.WriteLine("Standing: " + company.Standing);
-System.Console.WriteLine("State: " + company.State);
-System.Console.WriteLine("File Date: " + company.FileDate);
-System.Console.WriteLine("Authority Date: " + company.AuthorityDate);
-System.Console.WriteLine("Last Annual Report: " + company.LastAnnualReport);
-System.Console.WriteLine("Principal Office: " + company.PrincipalOffice);
-System.Console.WriteLine("Registered Agent: " + company.RegisteredAgent);
-System.Console.WriteLine("Country: " + company.Country);
-System.Console.WriteLine("Managed By: " + company.ManagedBy);
-System.Console.WriteLine("Organizer: " + company.Organizer);
-// Add more fields as needed
+}
+catch (System.Exception)
+{
+    System.Console.WriteLine("Initial Officers Button not found. Skipping initial officers extraction.");
+}
+
+// Print out the company object to the console; Print out only the fields that are not null or empty
+
+System.Console.WriteLine(company.ToString());
 
 // Load the Word Document		
