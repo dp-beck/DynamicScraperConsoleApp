@@ -19,8 +19,8 @@ namespace DynamicScraperConsoleApp
         public string? PrincipalOffice { get; set; }
         public string? ManagedBy { get; set; }
         public string? RegisteredAgent { get; set; }
-        public List<Officer>? InitialOfficers { get; set; }
-        public List<Officer>? CurrentOfficers { get; set; }
+        public List<Officer>? InitialOfficers { get; set; } = new List<Officer>();
+        public List<Officer>? CurrentOfficers { get; set; } = new List<Officer>();
 
         public override string ToString()
         {

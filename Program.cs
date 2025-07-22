@@ -162,7 +162,7 @@ try
     OpenCurrentOfficersTab.Click();
 
     // Get Nodes for Current Officers
-    var currentOfficerNodes = driver.FindElements(By.XPath("//*[@id='MainContent_pcurrent']/div/div"));
+    var currentOfficerNodes = driver.FindElements(By.XPath("//*[@id='MainContent_pcurrent']/div/div[position() > 1]"));
  
     foreach (var currentOfficerNode in currentOfficerNodes)
     {
