@@ -19,11 +19,12 @@ namespace DynamicScraperConsoleApp
         public string? PrincipalOffice { get; set; }
         public string? ManagedBy { get; set; }
         public string? RegisteredAgent { get; set; }
-        public string? Organizer { get; set; }
+        public List<Officer>? InitialOfficers { get; set; }
+        public List<Officer>? CurrentOfficers { get; set; }
 
         public override string ToString()
         {
-            return $"Organization Number: {OrganizationNumber ?? "Not Provided"} \n" +
+            string companyInfo = $"Organization Number: {OrganizationNumber ?? "Not Provided"} \n" +
                     $"Name: {Name ?? "Not Provided"} \n" +
                     $"Profit or Non-Profit: {ProfitOrNonprofit ?? "Not Provided"} \n" +
                     $"Company Type: {CompanyType ?? "Not Provided"} \n" +
@@ -39,8 +40,27 @@ namespace DynamicScraperConsoleApp
                     $"Last Annual Report: {LastAnnualReport ?? "Not Provided"} \n" +
                     $"Principal Office: {PrincipalOffice ?? "Not Provided"} \n" +
                     $"Registered Agent: {RegisteredAgent ?? "Not Provided"} \n" +
-                    $"Managed By: {ManagedBy ?? "Not Provided"} \n" +
-                    $"Organizer: {Organizer ?? "Not Provided"} \n";
+                    $"Managed By: {ManagedBy ?? "Not Provided"} \n";
+
+            if (InitialOfficers != null && InitialOfficers.Count > 0)
+            {
+                companyInfo += "Initial Officers: \n";
+                foreach (var officer in InitialOfficers)
+                {
+                    companyInfo += $"{officer.Name ?? "Not Provided"} - {officer.Title ?? "Not Provided"}\n";
+                }
+            }
+
+            if (CurrentOfficers != null && CurrentOfficers.Count > 0)
+            {
+                companyInfo += "Current Officers: \n";
+                foreach (var officer in CurrentOfficers)
+                {
+                    companyInfo += $"{officer.Name ?? "Not Provided"} - {officer.Title ?? "Not Provided"}\n";
+                }
+            }
+            
+            return companyInfo;
         }
     }
 }

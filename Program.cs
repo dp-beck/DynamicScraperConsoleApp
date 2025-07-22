@@ -115,41 +115,76 @@ try
 {
     IWebElement OpenInitialOfficersTab = driver.FindElement(By.Id("MainContent_BtnInitial"));
     // Scroll to the Initial Officers Button
-new Actions(driver)
-                .ScrollToElement(OpenInitialOfficersTab)
-                .Perform();
+    new Actions(driver)
+                    .ScrollToElement(OpenInitialOfficersTab)
+                    .Perform();
 
-// Click the Initial Officers Button
-OpenInitialOfficersTab.Click();
+    // Click the Initial Officers Button
+    OpenInitialOfficersTab.Click();
 
-// Get Nodes for Initial Officers
-var officerNodes = driver.FindElements(By.XPath("//*[@id='MainContent_pInitial']/div/div[position() > 0 and position() < 4]"));
+    // Get Nodes for Initial Officers
+    var officerNodes = driver.FindElements(By.XPath("//*[@id='MainContent_pInitial']/div/div[position() > 0 and position() < 4]"));
 
-foreach (var officerNode in officerNodes)
-{
-    // Extracting the officer's name and title
-    var propertyName = officerNode.FindElement(By.XPath("div[1]")).Text.Trim();
-    var propertyValue = officerNode.FindElement(By.XPath("div[2]")).Text.Trim();
-
-    switch (propertyName)
+    foreach (var officerNode in officerNodes)
     {
-        case "Organizer":
-            company.Organizer = propertyValue;
-            break;
-            // Add more cases for other officer properties if needed
-            // For example, if there are titles or roles, you can add them here
-            // case "Title":
-            //     company.Title = propertyValue;
-            //     break;
+        // Extracting the officer's name and title
+        var propertyName = officerNode.FindElement(By.XPath("div[1]")).Text.Trim();
+        var propertyValue = officerNode.FindElement(By.XPath("div[2]")).Text.Trim();
+
+        Officer officer = new Officer
+        {
+            Name = propertyValue,
+            Title = propertyName // Assuming the title is the first div and name is the second
+        };
+
+        company.InitialOfficers.Add(officer);
+
     }
-}
 
 }
+
 catch (System.Exception)
 {
     System.Console.WriteLine("Initial Officers Button not found. Skipping initial officers extraction.");
 }
 
+// Try-Catch -- Get the Current Officers Button
+try
+{
+    IWebElement OpenCurrentOfficersTab = driver.FindElement(By.Id("MainContent_BtnCurrent"));
+
+    // Scroll to the Current Officers Button
+    new Actions(driver)
+                    .ScrollToElement(OpenCurrentOfficersTab)
+                    .Perform();
+
+    // Click the Current Officers Button
+    OpenCurrentOfficersTab.Click();
+
+    // Get Nodes for Current Officers
+    var currentOfficerNodes = driver.FindElements(By.XPath("//*[@id='MainContent_pcurrent']/div/div"));
+ 
+    foreach (var currentOfficerNode in currentOfficerNodes)
+    {
+        // Extracting the officer's name and title
+        var propertyName = currentOfficerNode.FindElement(By.XPath("div[1]")).Text.Trim();
+        var propertyValue = currentOfficerNode.FindElement(By.XPath("div[2]")).Text.Trim();
+
+        Officer officer = new Officer
+        {
+            Name = propertyValue,
+            Title = propertyName // Assuming the title is the first div and name is the second
+        };
+
+        company.CurrentOfficers.Add(officer);
+    }
+}
+catch (System.Exception)
+{
+    
+    System.Console.WriteLine("Current Officers Button not found. Skipping current officers extraction.");
+
+}
 // Print out the company object to the console; Print out only the fields that are not null or empty
 
 System.Console.WriteLine(company.ToString());
